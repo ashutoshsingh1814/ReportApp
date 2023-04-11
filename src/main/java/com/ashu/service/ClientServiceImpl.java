@@ -1,8 +1,9 @@
 package com.ashu.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,27 @@ public class ClientServiceImpl implements ClientService {
 			entity.setGender(request.getGender());
 		}
 	
+		if(null!=request.getPlanStartDate() && !"".equals(request.getPlanStartDate())) {
+			String startDate = request.getPlanStartDate();
+			// convert String to LocalDate Format
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); 
+			LocalDate localDate = LocalDate.parse(startDate, formatter);
+            entity.setPlanStartDate(localDate);
+		
+		}
+		
+		if(null!=request.getPlanEndDate() && !"".equals(request.getPlanEndDate())) {
+			String endDate = request.getPlanEndDate();
+			// convert String to LocalDate Format
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); 
+			LocalDate localDate1 = LocalDate.parse(endDate, formatter);
+            entity.setPlanEndDate(localDate1);
+		
+		}
+		
+		
+		
+		
 		
 		return repo.findAll(Example.of(entity));
 		 

@@ -56,6 +56,7 @@
 					<td><form:input path="planEndDate" type="date" /></td>
 				</tr>
 				<tr>
+				    <td><a href="/" class="btn btn-secondary">Reset</a></td>
 					<td><input type="submit" class="btn btn-primary"></td>
 				</tr>
 
