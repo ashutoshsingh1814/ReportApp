@@ -2,6 +2,8 @@ package com.ashu.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,6 +51,18 @@ public class ReportController {
 		model.addAttribute("status", serv.getPlanStatus());
 		
 	}
+	
+	@GetMapping("/excel")
+	public void excelExport(HttpServletResponse response)throws Exception {
+		response.setContentType("application/octet-stream");
+		response.addHeader("content-disposition", "attachment;filename=plans.xls");
+		
+		serv.exportExcel(response);
+		
+		
+	}
+	
+	
 	
 
 
