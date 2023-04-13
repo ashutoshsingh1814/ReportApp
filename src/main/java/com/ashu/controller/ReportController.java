@@ -1,5 +1,6 @@
 package com.ashu.controller;
 
+import java.io.File;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -14,12 +15,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.ashu.entity.Client;
 import com.ashu.request.SearchRequest;
 import com.ashu.service.ClientService;
+import com.ashu.util.EmailSender;
 
 @Controller
 public class ReportController {
 
 	@Autowired
 	private ClientService serv;
+
+	@Autowired
+	private EmailSender emailsend;
 
 	@PostMapping("/search")
 	public String handleSearch(@ModelAttribute("searchReq") SearchRequest request, Model model) {
@@ -56,12 +61,16 @@ public class ReportController {
 		serv.exportExcel(response);
 
 	}
-	
+
 	@GetMapping("/pdf")
 	public void pdfExport(HttpServletResponse response) throws Exception {
 		response.setContentType("application/pdf");
 		response.addHeader("content-disposition", "attachment;filename=plans.pdf");
 
+//		String subject="Test Mail";
+//		String body="<h1>This mail from Spring boot Application</h1>";
+//		String to="ashutoshsinghvit@gmail.com";
+//		emailsend.sendMail(subject, body, to);
 		serv.exportPdf(response);
 
 	}

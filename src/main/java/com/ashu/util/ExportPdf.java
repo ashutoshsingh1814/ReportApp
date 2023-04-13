@@ -1,5 +1,7 @@
 package com.ashu.util;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -18,11 +20,12 @@ import com.lowagie.text.pdf.PdfWriter;
 @Component
 public class ExportPdf {
 	
-	public void exportExcel(HttpServletResponse response, List<Client> plans) throws Exception{
+	public void exportExcel(HttpServletResponse response, List<Client> plans, File f) throws Exception{
 		
 	
 		Document document = new Document(PageSize.A4);
 		PdfWriter.getInstance(document, response.getOutputStream());
+		PdfWriter.getInstance(document, new FileOutputStream(f));
 		document.open();
 
 		Font fontTiltle = FontFactory.getFont(FontFactory.TIMES_ROMAN);
@@ -53,6 +56,9 @@ public class ExportPdf {
 
 		}
 		document.add(table);
+		
+		
+		
 
 		document.close();
 	}

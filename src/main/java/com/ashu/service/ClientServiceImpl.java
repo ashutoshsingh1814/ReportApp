@@ -1,17 +1,12 @@
 package com.ashu.service;
 
-import java.io.OutputStream;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -19,17 +14,9 @@ import org.springframework.stereotype.Service;
 import com.ashu.entity.Client;
 import com.ashu.repo.ClientRepo;
 import com.ashu.request.SearchRequest;
+import com.ashu.util.EmailSender;
 import com.ashu.util.ExportExcel;
 import com.ashu.util.ExportPdf;
-import com.lowagie.text.Document;
-import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfTable;
-import com.lowagie.text.pdf.PdfWriter;
 
 @Service
 public class ClientServiceImpl implements ClientService {
@@ -40,6 +27,8 @@ public class ClientServiceImpl implements ClientService {
 	private ExportExcel excel;
 	@Autowired
 	private ExportPdf pdf;
+	@Autowired
+	private EmailSender emailsend;
 
 	@Override
 	public List<String> getPlanName() {
@@ -94,9 +83,18 @@ public class ClientServiceImpl implements ClientService {
 
 	@Override
 	public boolean exportPdf(HttpServletResponse response) throws Exception {
-
+		File f = new File("plans.pdf");
 		List<Client> plans = repo.findAll();
-		pdf.exportExcel(response, plans);
+		pdf.exportExcel(response, plans, f);
+		
+		
+
+		String subject = "Test Mail";
+		String body = "<h1>This mail from Spring boot Application</h1>";
+		String to = "ashutoshsinghvit@gmail.com";
+
+		emailsend.sendMail(subject, body, to, f);
+		f.delete();
 
 		return true;
 	}
@@ -105,6 +103,16 @@ public class ClientServiceImpl implements ClientService {
 	public boolean exportExcel(HttpServletResponse response) throws Exception {
 		List<Client> records = repo.findAll();
 		excel.getExportExcel(response,records);
+		File f = new File("plans.xls");
+
+		String subject = "Test Mail";
+		String body = "<h1>This mail from Spring boot Application</h1>";
+		String to = "ashutoshsinghvit@gmail.com";
+
+		emailsend.sendMail(subject, body, to, f);
+		f.delete();
+		
+		
 		
 		return true;
 	}

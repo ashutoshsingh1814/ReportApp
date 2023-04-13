@@ -1,5 +1,7 @@
 package com.ashu.util;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -12,12 +14,12 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Component;
 
 import com.ashu.entity.Client;
+
 @Component
 public class ExportExcel {
-	
+
 	public void getExportExcel(HttpServletResponse response, List<Client> records) throws Exception {
-		
-		
+
 		Workbook workbook = new HSSFWorkbook();
 		Sheet sheet = workbook.createSheet("Plan-data");
 		Row headRow = sheet.createRow(0);
@@ -29,8 +31,6 @@ public class ExportExcel {
 		headRow.createCell(5).setCellValue("Plan Start Date");
 		headRow.createCell(6).setCellValue("Plan End Date");
 		headRow.createCell(7).setCellValue("Benefit Amount");
-
-		
 
 		int dataRowIndex = 1;
 		for (Client plan : records) {
@@ -52,18 +52,15 @@ public class ExportExcel {
 
 		}
 
-//		FileOutputStream fos = new FileOutputStream(new File("plan.xlsx"));
-//		workbook.write(fos);
-//		workbook.close();
+		FileOutputStream fos = new FileOutputStream(new File("plans.xls"));
+		workbook.write(fos);
+		workbook.close();
 
 		ServletOutputStream outputStream = response.getOutputStream();
 		workbook.write(outputStream);
 
 		workbook.close();
 
-		
-		
 	}
-	
 
 }
