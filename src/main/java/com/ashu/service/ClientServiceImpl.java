@@ -1,7 +1,6 @@
 package com.ashu.service;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -20,12 +19,27 @@ import org.springframework.stereotype.Service;
 import com.ashu.entity.Client;
 import com.ashu.repo.ClientRepo;
 import com.ashu.request.SearchRequest;
+import com.ashu.util.ExportExcel;
+import com.ashu.util.ExportPdf;
+import com.lowagie.text.Document;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfTable;
+import com.lowagie.text.pdf.PdfWriter;
 
 @Service
 public class ClientServiceImpl implements ClientService {
 
 	@Autowired
 	private ClientRepo repo;
+	@Autowired
+	private ExportExcel excel;
+	@Autowired
+	private ExportPdf pdf;
 
 	@Override
 	public List<String> getPlanName() {
@@ -79,58 +93,20 @@ public class ClientServiceImpl implements ClientService {
 	}
 
 	@Override
-	public boolean exportPdf() {
+	public boolean exportPdf(HttpServletResponse response) throws Exception {
 
-		
-		return false;
+		List<Client> plans = repo.findAll();
+		pdf.exportExcel(response, plans);
+
+		return true;
 	}
 
 	@Override
-	public boolean exportExcel(HttpServletResponse response)throws Exception {
-		Workbook workbook = new HSSFWorkbook();
-		Sheet sheet = workbook.createSheet("Plan-data");
-		Row headRow = sheet.createRow(0);
-		headRow.createCell(0).setCellValue("ID");
-		headRow.createCell(1).setCellValue("Client Name");
-		headRow.createCell(2).setCellValue("Plan Name");
-		headRow.createCell(3).setCellValue("Plan Status");
-		headRow.createCell(4).setCellValue("Gender");
-		headRow.createCell(5).setCellValue("Plan Start Date");
-		headRow.createCell(6).setCellValue("Plan End Date");
-		headRow.createCell(7).setCellValue("Benefit Amount");
-
+	public boolean exportExcel(HttpServletResponse response) throws Exception {
 		List<Client> records = repo.findAll();
-
-		int dataRowIndex = 1;
-		for (Client plan : records) {
-			Row dataRow = sheet.createRow(dataRowIndex);
-			dataRow.createCell(0).setCellValue(plan.getClientId());
-			dataRow.createCell(1).setCellValue(plan.getClientName());
-			dataRow.createCell(2).setCellValue(plan.getPlanName());
-			dataRow.createCell(3).setCellValue(plan.getPlanStatus());
-			dataRow.createCell(4).setCellValue(plan.getGender());
-			dataRow.createCell(5).setCellValue(plan.getPlanStartDate()+"");
-			dataRow.createCell(6).setCellValue(plan.getPlanEndDate()+"");
-			if(null != plan.getBenifitAmt()) {
-				dataRow.createCell(7).setCellValue(plan.getBenifitAmt());
-			}else {
-				dataRow.createCell(7).setCellValue("N/A");	
-			}
-			
-			dataRowIndex++;
-
-		}
-
-//		FileOutputStream fos = new FileOutputStream(new File("plan.xlsx"));
-//		workbook.write(fos);
-//		workbook.close();
+		excel.getExportExcel(response,records);
 		
-		
-		ServletOutputStream outputStream = response.getOutputStream();
-		workbook.write(outputStream);
-		workbook.close();
-		
-		return false;
+		return true;
 	}
 
 }

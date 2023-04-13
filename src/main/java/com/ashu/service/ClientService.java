@@ -14,7 +14,7 @@ public interface ClientService {
 	
 	public List<Client> searchResult(SearchRequest request);
 	
-	public boolean exportPdf();
+	public boolean exportPdf(HttpServletResponse response) throws Exception;
 	public boolean exportExcel(HttpServletResponse response) throws Exception;
 
 }

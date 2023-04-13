@@ -17,53 +17,53 @@ import com.ashu.service.ClientService;
 
 @Controller
 public class ReportController {
-	
+
 	@Autowired
 	private ClientService serv;
-	
+
 	@PostMapping("/search")
-	public String handleSearch(@ModelAttribute("searchReq")  SearchRequest request, Model model) {
-		
+	public String handleSearch(@ModelAttribute("searchReq") SearchRequest request, Model model) {
+
 		System.out.println(request);
-		
-	   List<Client> plans= serv.searchResult(request);
-	   model.addAttribute("plans", plans);  // sending data to UI
+
+		List<Client> plans = serv.searchResult(request);
+		model.addAttribute("plans", plans); // sending data to UI
 		init(model);
 		return "index";
-		
+
 	}
-	
-	
+
 	@GetMapping("/")
-	public String indexPage(Model model)
-	{
-		
+	public String indexPage(Model model) {
+
 		model.addAttribute("searchReq", new SearchRequest());
 		init(model);
 		return "index";
 	}
 
-
 	private void init(Model model) {
-		
-		
+
 		model.addAttribute("plansName", serv.getPlanName());
 		model.addAttribute("status", serv.getPlanStatus());
-		
+
 	}
-	
+
 	@GetMapping("/excel")
-	public void excelExport(HttpServletResponse response)throws Exception {
+	public void excelExport(HttpServletResponse response) throws Exception {
 		response.setContentType("application/octet-stream");
 		response.addHeader("content-disposition", "attachment;filename=plans.xls");
-		
+
 		serv.exportExcel(response);
-		
-		
+
 	}
 	
-	
-	
+	@GetMapping("/pdf")
+	public void pdfExport(HttpServletResponse response) throws Exception {
+		response.setContentType("application/pdf");
+		response.addHeader("content-disposition", "attachment;filename=plans.pdf");
 
+		serv.exportPdf(response);
+
+	}
 
 }
